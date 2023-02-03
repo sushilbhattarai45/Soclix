@@ -1,0 +1,25 @@
+.navul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 100px;
+  overflow: hidden;
+  width: 200px;
+}
+
+.navul button {
+  background-color: #6c63ff;
+  text-align: left;
+  font-family: "Poppins", sans-serif;
+  height: 50px;
+  width: 100%;
+  border-radius: 0;
+}
+
+.navul button:hover {
+  text-decoration-line: none;
+  border-color: rgb(108 99 255);
+  background-color: white;
+
+  color: rgb(108 99 255);
+}

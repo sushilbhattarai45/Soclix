@@ -1,0 +1,13 @@
+.hNav {
+  background-color: rgb(108 99 255);
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.hNav p {
+  color: white;
+  padding: 4px 24px;
+  text-decoration: none;
+  font-size: 17px;
+}
