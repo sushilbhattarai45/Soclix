@@ -1,4 +1,4 @@
-import userSchema from "../models/userModels";
+import userSchema from "../models/userModels.js";
 import moment from "moment";
 
 export const postUser = async (req, res) => {
