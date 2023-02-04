@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import Express from "express";
 const connectDb = async () => {
   try {
-    let url =
-      "mongodb+srv://soclix123:soclix123@cluster0.vl9wvgl.mongodb.net/?retryWrites=true&w=majority";
+    const url = process.env.MONGO_URL;
+
     const conn = await mongoose.connect(url, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

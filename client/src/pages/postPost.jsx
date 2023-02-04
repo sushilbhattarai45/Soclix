@@ -147,7 +147,6 @@ const PostPost = () => {
               setSubmitting,
               touched,
               setValues,
-              handleFilesChange,
               handleChange,
               handleSubmit,
               isSubmitting,

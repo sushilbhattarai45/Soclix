@@ -5,6 +5,8 @@ import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import configRoutes from "./routes/configRoutes.js";
 const App = Express();
+import {} from "dotenv/config";
+
 connectDb();
 App.use(cors());
 App.listen(3000, () => {

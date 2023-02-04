@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import "../../styles/home.css";
 import people from "../assets/p1.svg";
@@ -13,17 +13,23 @@ function Home() {
   const [show, setShow] = useState(false);
   const [login, setLogin] = useState(false);
   const [loggedData, setloggedData] = useState(null);
-
+  const [email, setEmail] = useState(null);
   const onSuccess = (res) => {
     // console.log("success:", res?.profileObj);
     setLogin(true);
     setloggedData(res?.profileObj);
     localStorage.setItem("logged", true);
-    localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
+    localStorage.setItem("email", res?.profileObj.email);
+
+    // localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
   };
   const onFailure = (err) => {
     console.log("failed:", err);
   };
+  useEffect(() => {
+    var e = localStorage.getItem("email");
+    setEmail(e);
+  }, [email]);
   return (
     <div
       className="App"

@@ -25,7 +25,7 @@ export const postUser = async (req, res) => {
 };
 export const getUser = async (req, res) => {
   try {
-    const data = await userSchema.find({ u_gid: req.body.u_gid });
+    const data = await userSchema.find({ u_email: req.body.u_email });
     res.status(200).json({ status: 200, data: data });
   } catch (err) {
     console.log({ err: "Error" });

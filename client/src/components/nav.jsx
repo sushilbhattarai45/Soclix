@@ -121,18 +121,20 @@ function Nav() {
               </Link>
             </li>
             <li>
-              <button
-                onClick={() => {
-                  setLabel("Dev");
-                }}
-                style={
-                  label == "Dev"
-                    ? { backgroundColor: "white", color: "rgb(108 99 255)" }
-                    : null
-                }
-              >
-                Developer
-              </button>
+              <Link to={"././addConfig"}>
+                <button
+                  onClick={() => {
+                    setLabel("Config");
+                  }}
+                  style={
+                    label == "Config"
+                      ? { backgroundColor: "white", color: "rgb(108 99 255)" }
+                      : null
+                  }
+                >
+                  Configurations
+                </button>
+              </Link>
             </li>
           </ul>
         </div>

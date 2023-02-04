@@ -1,27 +1,45 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext } from "react";
+import axios from "axios";
+export const ContextProvider = createContext({
+  logged: false,
+  setlogged: () => {},
 
-import { createContext } from "react";
-export const ContextProvider = createContext();
+  loggeddata: {},
+  setloggeddata: () => {},
+});
 const Context = ({ children }) => {
-  const [loggedddata, setloggeddata] = useState({});
+  const [loggeddata, setloggeddata] = useState({});
   const [logged, setlogged] = useState(false);
   useEffect(() => {
     getName();
-
-    console.log(loggedddata);
-    console.log("ok" + loggedddata["name"]);
     return;
-  }, []);
+  }, [loggeddata]);
+
   async function getName() {
-    const l = localStorage.getItem("logged");
-    const d = localStorage.getItem("loggedData");
-    setlogged(l);
-    setloggeddata(JSON.parse(d));
+    const l = localStorage.getItem("email");
+    if (l) {
+      console.log(l);
+      const data = await axios.post(
+        "http://192.168.10.102:3000/v1/api/user/getUser",
+        {
+          u_email: localStorage.getItem("email"),
+        }
+      );
+
+      console.log("Ok" + JSON.parse(data.data));
+      setlogged(true);
+    }
+    setlogged(false);
+
+    // setloggeddata(JSON.parse(d));
   }
   return (
     <ContextProvider.Provider
       value={{
-        a: [logged, setlogged],
+        logged,
+        setlogged,
+        loggeddata,
+        setloggeddata,
       }}
     >
       {children}

@@ -1,24 +1,16 @@
 import { fontSize, fontWeight, lineHeight } from "@mui/system";
 import { useState, useEffect, useContext } from "react";
 import p1 from "../assets/pp.jpg";
-import ContextProvider from "../config/context.jsx";
+import { ContextProvider } from "../config/context.jsx";
 import people from "../assets/people.svg";
 import { colors } from "../tools";
 function Dashboard() {
-  // const { a } = useContext(ContextProvider);
-  const [logged, setlogged] = useState(false);
+  const { loggeddata, logged } = useContext(ContextProvider);
   const [show, setShow] = useState(true);
-  const [loggedddata, setloggeddata] = useState({});
   useEffect(() => {
-    getName();
+    console.log("l" + loggeddata);
     return;
-  }, []);
-  async function getName() {
-    const l = localStorage.getItem("logged");
-    const d = localStorage.getItem("loggedData");
-    // setlogged(l);
-    setloggeddata(JSON.parse(d));
-  }
+  }, [logged]);
 
   return (
     <div style={{}}>
@@ -49,7 +41,7 @@ function Dashboard() {
                 localStorage.setItem("logged", false);
                 localStorage.setItem("loggeddata", null);
               }}
-              src={loggedddata?.imageUrl}
+              src={loggeddata?.imageUrl}
               style={{
                 width: 150,
                 height: 150,
@@ -74,7 +66,7 @@ function Dashboard() {
               }}
             >
               {" "}
-              {loggedddata?.name}
+              {loggeddata?.name}
             </p>
             <p
               style={{
@@ -101,7 +93,7 @@ function Dashboard() {
                 letterSpacing: 0.2,
               }}
             >
-              {loggedddata?.email}
+              {loggeddata?.email}
             </p>
           </div>
 
