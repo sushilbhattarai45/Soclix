@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
+
+import { useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
 import * as Yup from "yup";
 import axios from "axios";
@@ -9,6 +11,16 @@ const validation = Yup.object().shape({
 });
 
 const addConfig = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    var e = localStorage.getItem("email");
+
+    if (e == null);
+    {
+      navigate("../../", { replace: true });
+    }
+  }, []);
+
   const postData = async (values) => {
     const data = await axios.post(
       "http://192.168.10.104:3000/v1/api/config/postConfig",

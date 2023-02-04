@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createContext } from "react";
 import axios from "axios";
 export const ContextProvider = createContext({
-  logged: false,
+  logged: "",
   setlogged: () => {},
 
   loggeddata: {},
@@ -16,20 +16,21 @@ const Context = ({ children }) => {
   }, [loggeddata]);
 
   async function getName() {
-    const l = localStorage.getItem("email");
+    const l = JSON.parse(localStorage.getItem("email"));
+    console.log(l);
     if (l) {
-      console.log(l);
       const data = await axios.post(
         "http://192.168.10.102:3000/v1/api/user/getUser",
         {
-          u_email: localStorage.getItem("email"),
+          u_email: l,
         }
       );
-
-      console.log("Ok" + JSON.parse(data.data));
+      console.log(data.data.data);
+      setloggeddata(data.data.data);
       setlogged(true);
+
+      console.log("ok" + loggeddata);
     }
-    setlogged(false);
 
     // setloggeddata(JSON.parse(d));
   }

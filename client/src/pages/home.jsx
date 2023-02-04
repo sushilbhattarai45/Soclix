@@ -7,35 +7,59 @@ import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { GoogleLogin } from "react-google-login";
 import { gapi } from "gapi-script";
+import axios from "axios";
 import { colors } from "../tools.js";
-import { NavLink } from "react-router-dom";
+import { useContext } from "react";
+import { ContextProvider } from "../config/context";
+import { NavLink, useNavigate } from "react-router-dom";
 function Home() {
+  const { logged, setlogged, loggeddata } = useContext(ContextProvider);
+  const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [login, setLogin] = useState(false);
   const [loggedData, setloggedData] = useState(null);
   const [email, setEmail] = useState(null);
   const onSuccess = (res) => {
-    // console.log("success:", res?.profileObj);
-    setLogin(true);
+    console.log("success:", res?.profileObj);
     setloggedData(res?.profileObj);
+    setLogin(true);
+
     localStorage.setItem("logged", true);
-    localStorage.setItem("email", res?.profileObj.email);
+    localStorage.setItem("email", JSON.stringify(res?.profileObj.email));
+    postData();
+    navigate("../app/dashboard", { replace: true });
 
     // localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
   };
   const onFailure = (err) => {
     console.log("failed:", err);
   };
+
+  const postData = async () => {
+    const data = await axios.post(
+      "http://192.168.10.102:3000/v1/api/user/postuser",
+      {
+        u_gid: loggedData.googleId,
+        u_email: loggedData.email,
+        u_name: loggedData.name,
+        u_prof: loggedData.imageUrl,
+      }
+    );
+    console.log(data);
+  };
+
   useEffect(() => {
+    alert(logged);
     var e = localStorage.getItem("email");
-    setEmail(e);
-  }, [email]);
+    alert(e);
+  }, []);
   return (
     <div
       className="App"
       style={{
         position: "absolute",
         top: 0,
+        left: 0,
       }}
     >
       <div>
@@ -62,7 +86,6 @@ function Home() {
           <div
             style={{
               flex: 0.375,
-              marginLeft: 50,
             }}
           >
             <p

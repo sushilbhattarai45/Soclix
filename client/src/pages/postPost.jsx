@@ -3,6 +3,7 @@ import People from "../assets/people.svg";
 import { Formik } from "formik";
 import { TextField } from "@mui/material";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
 // import { TwitterApi } from "twitter-api-v2";
 import axios from "axios";
 import { OAuth } from "oauth";
@@ -24,6 +25,17 @@ const validation = Yup.object().shape({
 // });
 
 const PostPost = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    var e = localStorage.getItem("email");
+
+    if (e == null);
+    {
+      navigate("../../", { replace: true });
+    }
+  });
+
   // const tweet = (values) => {
   //   const onFinish = (err, reply) => {
   //     if (err) {

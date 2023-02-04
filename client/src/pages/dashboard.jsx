@@ -4,11 +4,18 @@ import p1 from "../assets/pp.jpg";
 import { ContextProvider } from "../config/context.jsx";
 import people from "../assets/people.svg";
 import { colors } from "../tools";
+import { useNavigate } from "react-router-dom";
 function Dashboard() {
+  const navigate = useNavigate();
   const { loggeddata, logged } = useContext(ContextProvider);
   const [show, setShow] = useState(true);
+  const [data, setData] = useState(null);
   useEffect(() => {
-    console.log("l" + loggeddata);
+    const e = localStorage.getItem("logged");
+    if (e == false) {
+      navigate("../../", { replace: true });
+    }
+    console.log(loggeddata);
     return;
   }, [logged]);
 
@@ -36,12 +43,7 @@ function Dashboard() {
             }}
           >
             <img
-              onClick={() => {
-                alert("ok");
-                localStorage.setItem("logged", false);
-                localStorage.setItem("loggeddata", null);
-              }}
-              src={loggeddata?.imageUrl}
+              src={loggeddata?.u_prof}
               style={{
                 width: 150,
                 height: 150,
@@ -66,7 +68,7 @@ function Dashboard() {
               }}
             >
               {" "}
-              {loggeddata?.name}
+              {loggeddata?.u_name}
             </p>
             <p
               style={{
@@ -93,7 +95,7 @@ function Dashboard() {
                 letterSpacing: 0.2,
               }}
             >
-              {loggeddata?.email}
+              {loggeddata?.u_email}
             </p>
           </div>
 
