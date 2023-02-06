@@ -1,12 +1,11 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
-import People from "../assets/people.svg";
 import { Formik } from "formik";
 import { TextField } from "@mui/material";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-// import { TwitterApi } from "twitter-api-v2";
+import "react-activity/dist/library.css";
+import { Dots } from "react-activity";
 import axios from "axios";
-import { OAuth } from "oauth";
 import instance from "../config/upload";
 const validation = Yup.object().shape({
   title: Yup.string()
@@ -23,18 +22,32 @@ const validation = Yup.object().shape({
 //   access_token: "1573135956072271874-SmB0hV9bfPRQsZFLFcT8nEtkA2O9o6",
 //   access_token_secret: "m7F31kj7dTBS2K9wQwh2LYgwhcGUrEAgiq6Se5PQdvR3C",
 // });
+import { ContextProvider } from "../config/context";
+import { toast, Toaster } from "react-hot-toast";
+import { colors } from "../tools";
 
 const PostPost = () => {
+  const [load, setLoad] = useState(false);
+  const { loggeddata, logged } = useContext(ContextProvider);
+
+  const getConfig = async () => {
+    console.log(loggeddata);
+    let data = await axios.post(
+      "http://192.168.10.104:3000/v1/api/config/getConfig",
+      {
+        u_id: loggeddata?.u_gid,
+      }
+    );
+  };
+
   const navigate = useNavigate();
-
   useEffect(() => {
-    var e = localStorage.getItem("email");
-
-    if (e == null);
-    {
+    // var e = localStorage.getItem("email");
+    getConfig();
+    if (!logged) {
       navigate("../../", { replace: true });
     }
-  });
+  }, []);
 
   // const tweet = (values) => {
   //   const onFinish = (err, reply) => {
@@ -65,6 +78,7 @@ const PostPost = () => {
       });
 
       const { msg, imgUrl } = await data;
+      setImg(imgUrl);
       return imgUrl;
     } catch (err) {
       console.log("Error uploading image");
@@ -73,15 +87,34 @@ const PostPost = () => {
     }
   };
 
-  const PostinFb = (values) => {
-    const pageid = 113303321359395;
+  const [img, setImg] = useState(null);
+  const getData = async () => {
+    const ldata = JSON.stringify(loggeddata);
+    alert(ldata.u_gid);
+    const data = await axios.post(
+      "http://192.168.10.104:3000/v1/api/config/getConfig",
+      {
+        u_id: loggeddata?.u_gid,
+      }
+    );
 
-    const access_token =
-      "EABgQ9NNoaXcBAJaWiwO9ip3FlRwklfjrfuPrAAOOWPXGDXyZBJLV4tQyl773KzOt8PuNBROU9aPmSNGTL26M8RW2K7YgPZC48hjcmEsllm3U3JKNi1Xn257ZAli6IyO01F4xNPJ9iSgQ4HoMRnsduKVf8IgLKsp1JND5lOj8dsUNFf3cD8xZAyNworZCwxoKY4nT5KSXxf8YYeZBEgQ1o7SCTNLNzxjoMZD";
+    console.log("hrllo" + data.data.data[0]);
+
+    return data.data.data[0];
+  };
+  const PostinFb = async (values) => {
+    setLoad(true);
+    toast("Posting");
+    const { fb_appId, fb_access } = await getData();
+    console.log(fb_appId);
+    // const pageid = 113303321359395;
+
+    // const access_token =
+    //   "EABgQ9NNoaXcBAJaWiwO9ip3FlRwklfjrfuPrAAOOWPXGDXyZBJLV4tQyl773KzOt8PuNBROU9aPmSNGTL26M8RW2K7YgPZC48hjcmEsllm3U3JKNi1Xn257ZAli6IyO01F4xNPJ9iSgQ4HoMRnsduKVf8IgLKsp1JND5lOj8dsUNFf3cD8xZAyNworZCwxoKY4nT5KSXxf8YYeZBEgQ1o7SCTNLNzxjoMZD";
     console.log(values.title);
     const url =
       "https://graph.facebook.com/" +
-      pageid +
+      fb_appId.trim() +
       "/photos?url=" +
       values.image +
       "&message=" +
@@ -89,11 +122,15 @@ const PostPost = () => {
       "  " +
       values.description +
       "&access_token=" +
-      access_token;
-    console.log(url);
-    const res = axios.post(url);
+      fb_access.trim();
+    console.log("url" + url);
+    const res = await axios.post(url);
 
-    console.log(res);
+    const postid = await res.data.id;
+    if (postid != null) {
+      setLoad(false);
+      toast.success("Posted");
+    }
 
     console.log(values.image);
   };
@@ -117,7 +154,8 @@ const PostPost = () => {
       >
         <div
           style={{
-            margin: 20,
+            marginTop: 20,
+            marginLeft: 20,
             flex: 0.1,
             display: "flex",
             color: "black",
@@ -125,12 +163,13 @@ const PostPost = () => {
         >
           <p
             style={{
+              color: "black",
               fontFamily: "Poppins",
-              fontSize: 20,
+              fontWeight: "700",
+              fontSize: 26,
             }}
           >
-            {" "}
-            Please Enters the details Correctly.
+            Enter the details carefully{" "}
           </p>
         </div>
 
@@ -167,80 +206,115 @@ const PostPost = () => {
               <div
                 style={{
                   flex: 1,
-                  justifyContent: "space-evenly",
+                  justifyContent: "flex-start",
                   display: "flex",
+                  margin: 20,
                   flexDirection: "row",
                 }}
               >
-                <TextField
-                  id="outlined-basic"
-                  label="Title"
-                  type={"text"}
-                  name="title"
-                  initialValues={values.title}
-                  onChange={handleChange}
-                  //   value={values.title}
-                  variant="outlined"
-                  style={{}}
-                />
-                <p
+                <div>
+                  <TextField
+                    id="outlined-basic"
+                    label="Title"
+                    type={"text"}
+                    name="title"
+                    initialValues={values.title}
+                    onChange={handleChange}
+                    //   value={values.title}
+                    variant="outlined"
+                    style={{}}
+                  />
+                  <p
+                    style={{
+                      color: "red",
+                    }}
+                  >
+                    {" "}
+                    {errors.title && touched.title && errors.title}
+                  </p>
+                  <TextField
+                    multiline={true}
+                    id="outlined-basic"
+                    type="text"
+                    name="description"
+                    onChange={handleChange}
+                    initialValues={values.description}
+                    label="Description"
+                    variant="outlined"
+                    style={{
+                      width: 300,
+                    }}
+                  />
+                  <p
+                    style={{
+                      color: "red",
+                    }}
+                  >
+                    {" "}
+                    {errors.description &&
+                      touched.description &&
+                      errors.description}
+                  </p>
+                </div>
+                <div
                   style={{
-                    color: "red",
+                    display: "flex",
+                    marginLeft: 50,
+                    flexDirection: "column",
+                    justifyContent: "space-evenly",
                   }}
                 >
-                  {" "}
-                  {errors.title && touched.title && errors.title}
-                </p>
-                <TextField
-                  multiline={true}
-                  id="outlined-basic"
-                  type="text"
-                  name="description"
-                  onChange={handleChange}
-                  initialValues={values.description}
-                  label="Description"
-                  variant="outlined"
-                  style={{
-                    width: 300,
-                  }}
-                />
-                <p
-                  style={{
-                    color: "red",
-                  }}
-                >
-                  {" "}
-                  {errors.description &&
-                    touched.description &&
-                    errors.description}
-                </p>
-                <input
-                  type="file"
-                  name="image"
-                  accept="image/*"
-                  onChange={async (val) => {
-                    const url = await imgupload(val);
-                    console.log("final " + url);
-                    setValues({ ...values, image: url });
-                  }}
-                  initialValues={values.image}
-                  style={{
-                    alignSelf: "center",
-                  }}
-                />
-                <img
-                  src={People}
-                  style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 20,
-                    alignSelf: "center",
-                  }}
-                />
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-evenly",
 
+                      alignItems: "center",
+                    }}
+                  >
+                    <input
+                      type="file"
+                      name="image"
+                      accept="image/*"
+                      onChange={async (val) => {
+                        const url = await imgupload(val);
+                        console.log("final " + url);
+                        setValues({ ...values, image: url });
+                      }}
+                      initialValues={values.image}
+                      style={{}}
+                    />
+                    {img ? (
+                      <img
+                        src={img}
+                        style={{
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          width: 80,
+                          height: 80,
+                          borderRadius: 20,
+                        }}
+                      />
+                    ) : null}
+                  </div>
+
+                  {load ? <Dots /> : null}
+                </div>
                 <button
                   style={{
-                    alignItems: "center", // <-- the magic
+                    alignSelf: "center",
+                    backgroundColor: colors.primary,
+                    color: "white",
+                    padding: 20,
+                    fontSize: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 10,
+                    marginLeft: 20,
+                    border: "none",
+                    outline: "none",
+                    cursor: "pointer",
                   }}
                   type="submit"
                   onClick={handleSubmit}

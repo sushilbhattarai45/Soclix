@@ -11,13 +11,15 @@ function Dashboard() {
   const [show, setShow] = useState(true);
   const [data, setData] = useState(null);
   useEffect(() => {
-    const e = localStorage.getItem("logged");
-    if (e == false) {
+    console.log(logged);
+    // window.location.reload();
+    const e = localStorage.getItem("email");
+    if (!logged) {
       navigate("../../", { replace: true });
     }
     console.log(loggeddata);
     return;
-  }, [logged]);
+  }, [data]);
 
   return (
     <div style={{}}>

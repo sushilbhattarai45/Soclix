@@ -10,19 +10,20 @@ import post from "../assets/post.svg";
 import posts from "../assets/posts.svg";
 import { useContext } from "react";
 import { ContextProvider } from "../config/context";
+import { colors } from "../tools";
 function Nav() {
-  const logout = () => {
-    localStorage.removeItem("logged");
-    localStorage.removeItem("loggeddata");
-    localStorage.setItem("email", "");
-
-    setloggeddata(null);
-    setlogged(false);
-    navigate("../");
-  };
-
   const { logged, setlogged, loggeddata, setloggeddata } =
     useContext(ContextProvider);
+  const logout = () => {
+    console.log("clearing");
+    localStorage.setItem("email", "null");
+    setloggeddata(null);
+    setlogged(false);
+
+    console.log(logged);
+    window.location.reload();
+  };
+
   const navigate = useNavigate();
   const [show, setShow] = useState(true);
   const [label, setLabel] = useState("Dashboard");
@@ -162,10 +163,19 @@ function Nav() {
             </ul>
             <button
               style={{
-                backgroundColor: "white",
+                backgroundColor: colors.primary,
                 position: "absolute",
-                bottom: 0,
-                marginLeft: 30,
+                color: "white",
+                alignSelf: "center",
+                borderWidth: 2,
+                borderColor: "white",
+                bottom: 20,
+                width: "90%",
+                textAlign: "center",
+                justifyContent: "center",
+                marginLeft: 10,
+                height: 40,
+                borderRadius: 5,
               }}
               onClick={() => {
                 logout();

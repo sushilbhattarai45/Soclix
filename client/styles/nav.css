@@ -18,7 +18,9 @@
   width: 100%;
   border-radius: 0;
 }
-
+.navul button {
+  color: white;
+}
 .navul button:hover {
   text-decoration-line: none;
   border-color: rgb(108 99 255);

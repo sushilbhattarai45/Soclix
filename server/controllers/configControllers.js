@@ -7,15 +7,22 @@ export const postConfig = async (req, res) => {
     time: moment().format("LT"),
   };
   try {
-    console.log(req.body);
-    const data = new configSchema({
-      u_id: req.body.u_id,
-      fb_appId: req.body.fb_appId,
-      fb_access: req.body.fb_access,
-      c_toc: c_toc,
-    });
-    await data.save();
-    res.status(200).json({ status: 200, message: "Config Posted" });
+    console.log("ok" + req.body);
+    const check = await configSchema.find({ u_id: req.body.u_id });
+    if (check.length > 0) {
+      {
+        await configSchema.updateOne(req.body);
+      }
+    } else {
+      const data = new configSchema({
+        u_id: req.body.u_id,
+        fb_appId: req.body.fb_appId,
+        fb_access: req.body.fb_access,
+        c_toc: c_toc,
+      });
+      await data.save();
+    }
+    res.status(200).json({ status: 200, message: "Config Posted/Updated" });
   } catch (err) {
     console.log({ err: "Error" });
   }

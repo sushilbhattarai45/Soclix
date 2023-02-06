@@ -1,36 +1,73 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
-
+import "react-activity/dist/library.css";
+import { Dots } from "react-activity";
 import { useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
 import * as Yup from "yup";
 import axios from "axios";
 const validation = Yup.object().shape({
-  fbappId: Yup.string(),
+  fbappId: Yup.number(),
   fbaccesstoken: Yup.string(),
 });
-
+import { toast, Toaster } from "react-hot-toast";
+import { useContext } from "react";
+import { ContextProvider } from "../config/context";
 const addConfig = () => {
+  const { logged, loggeddata } = useContext(ContextProvider);
   const navigate = useNavigate();
-  useEffect(() => {
-    var e = localStorage.getItem("email");
+  const [data, setData] = useState({});
+  const [load, setLoad] = useState(false);
+  const [appId, setAppId] = useState("");
+  const [fbaccesstoken, setFbaccesstoken] = useState("");
+  const getConfig = async () => {
+    const data = await axios.post(
+      "http://192.168.10.104:3000/v1/api/config/getConfig",
+      {
+        u_id: loggeddata?.u_gid,
+      }
+    );
 
-    if (e == null);
-    {
+    setAppId(data?.data?.data[0].fb_appId);
+    setFbaccesstoken(data?.data?.data[0].fb_access);
+
+    setData({
+      fbappId: appId,
+      fbaccesstoken: fbaccesstoken,
+    });
+
+    console.log("ok" + data?.data?.data[0].fb_appId);
+  };
+
+  useEffect(() => {
+    getConfig();
+
+    // setData({ ...d });
+    console.log("nepal" + data?.fb_appId);
+    console.log("ok    " + logged);
+    // var e = localStorage.getItem("email");
+    console.log(loggeddata);
+    if (!logged) {
       navigate("../../", { replace: true });
     }
-  }, []);
+  }, [logged]);
 
   const postData = async (values) => {
+    toast("Configuring....");
+
+    setLoad(true);
     const data = await axios.post(
       "http://192.168.10.104:3000/v1/api/config/postConfig",
       {
         fb_appId: values.fbappId,
-        u_id: "12345",
+        u_id: loggeddata?.u_gid,
         fb_access: values.fbaccesstoken,
       }
     );
-    console.log(data.data);
+    console.log(values);
+    toast.success("Configured Successfully");
+
+    setLoad(false);
   };
   return (
     <div
@@ -62,9 +99,10 @@ const addConfig = () => {
         }}
       >
         <Formik
+          enableReinitialize={true}
           initialValues={{
-            fbappId: "",
-            fbaccesstoken: "",
+            fbappId: appId,
+            fbaccesstoken: fbaccesstoken,
           }}
           validationSchema={validation}
           onSubmit={(values, { setSubmitting }) => {
@@ -111,7 +149,7 @@ const addConfig = () => {
                   label="Fb App Id"
                   type={"text"}
                   name="fbappId"
-                  initialValues={values.fbappId}
+                  value={appId}
                   onChange={handleChange}
                   variant="outlined"
                   style={{}}
@@ -133,7 +171,7 @@ const addConfig = () => {
                   }}
                   name="fbaccesstoken"
                   onChange={handleChange}
-                  initialValues={values.fbaccesstoken}
+                  value={fbaccesstoken}
                   variant="outlined"
                 />{" "}
                 {/* <TextField
@@ -155,6 +193,7 @@ const addConfig = () => {
                 >
                   Submit
                 </button>{" "}
+                {load ? <Dots /> : null}
               </div>
               <p
                 style={{

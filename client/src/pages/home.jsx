@@ -13,46 +13,49 @@ import { useContext } from "react";
 import { ContextProvider } from "../config/context";
 import { NavLink, useNavigate } from "react-router-dom";
 function Home() {
-  const { logged, setlogged, loggeddata } = useContext(ContextProvider);
+  const { logged, setlogged, loggeddata, setloggeddata } =
+    useContext(ContextProvider);
   const navigate = useNavigate();
   const [show, setShow] = useState(false);
   const [login, setLogin] = useState(false);
-  const [loggedData, setloggedData] = useState(null);
   const [email, setEmail] = useState(null);
-  const onSuccess = (res) => {
+
+  const handleSuccess = async (res) => {
     console.log("success:", res?.profileObj);
-    setloggedData(res?.profileObj);
+    setloggeddata(res?.profileObj);
     setLogin(true);
-
-    localStorage.setItem("logged", true);
-    localStorage.setItem("email", JSON.stringify(res?.profileObj.email));
     postData();
-    navigate("../app/dashboard", { replace: true });
+    setlogged(true);
+    console.log(logged);
+    localStorage.setItem("email", JSON.stringify(res?.profileObj.email));
+    localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
 
-    // localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
+    // navigate("../app/dashboard", { replace: true });
+    window.location.reload();
   };
+
   const onFailure = (err) => {
     console.log("failed:", err);
   };
 
   const postData = async () => {
     const data = await axios.post(
-      "http://192.168.10.102:3000/v1/api/user/postuser",
+      "http://192.168.10.104:3000/v1/api/user/postuser",
       {
-        u_gid: loggedData.googleId,
-        u_email: loggedData.email,
-        u_name: loggedData.name,
-        u_prof: loggedData.imageUrl,
+        u_gid: loggeddata.googleId,
+        u_email: loggeddata.email,
+        u_name: loggeddata.name,
+        u_prof: loggeddata.imageUrl,
       }
     );
     console.log(data);
   };
 
   useEffect(() => {
-    alert(logged);
-    var e = localStorage.getItem("email");
-    alert(e);
-  }, []);
+    if (logged) {
+      navigate("./app/dashboard", { replace: true });
+    }
+  });
   return (
     <div
       className="App"
@@ -70,6 +73,7 @@ function Home() {
               fontFamily: "Poppins",
               fontWeight: "700",
               fontSize: 26,
+              marginLeft: 50,
             }}
           >
             Logo
@@ -86,6 +90,7 @@ function Home() {
           <div
             style={{
               flex: 0.375,
+              marginLeft: 70,
             }}
           >
             <p
@@ -125,47 +130,86 @@ function Home() {
                 flex: 1,
                 marginTop: 30,
                 flexDirection: "row",
+                justifyContent: "flex-start",
                 display: "flex",
               }}
             >
-              <GoogleLogin
+              <div
                 style={{
-                  flex: 0.4,
-                  fontFamily: "Roboto",
-                  fontWeight: "700",
-                  letterSpacing: 1.3,
-                  color: colors.primary,
-                  borderRadius: 10,
-                  height: 47,
-                  borderWidth: 1,
-                  borderColor: colors.primary,
-                  backgroundColor: "white",
+                  flex: 0.3,
+                  width: 300,
                 }}
-                clientId="534384847718-dhr6p5r9ntqj98krqcitoaqksteppts1.apps.googleusercontent.com"
-                buttonText="Sign in with Google"
-                onSuccess={onSuccess}
-                onFailure={onFailure}
-                cookiePolicy={"single_host_origin"}
-                isSignedIn={true}
-              />{" "}
+              >
+                <GoogleLogin
+                  style={{
+                    flex: 0.4,
+                    width: 250,
+                  }}
+                  render={(renderProps) => (
+                    <button
+                      style={{
+                        width: 250,
+                        flex: 0.4,
+                        fontFamily: "Roboto",
+                        fontWeight: "700",
+                        letterSpacing: 1.3,
+                        color: colors.primary,
+                        borderRadius: 10,
+                        height: 47,
+                        borderWidth: 1,
+                        borderColor: colors.primary,
+                        backgroundColor: "white",
+                      }}
+                      onClick={renderProps.onClick}
+                      disabled={renderProps.disabled}
+                    >
+                      Sign In with Google{" "}
+                    </button>
+                  )}
+                  clientId="534384847718-dhr6p5r9ntqj98krqcitoaqksteppts1.apps.googleusercontent.com"
+                  buttonText="Sign in with Google"
+                  onSuccess={(res) => handleSuccess(res)}
+                  onn
+                  onFailure={onFailure}
+                />{" "}
+              </div>
               <div
                 style={{
                   marginLeft: 10,
-
+                  flex: 1,
                   borderWidth: 1,
                   borderColor: colors.primary,
                 }}
               >
                 <GoogleLogin
+                  render={(renderProps) => (
+                    <button
+                      style={{
+                        width: 250,
+                        flex: 0.3,
+                        fontFamily: "Roboto",
+                        fontWeight: "700",
+                        letterSpacing: 1.3,
+                        color: colors.primary,
+                        borderRadius: 10,
+                        height: 47,
+                        borderWidth: 1,
+                        borderColor: colors.primary,
+                        backgroundColor: "white",
+                      }}
+                      onClick={renderProps.onClick}
+                      disabled={renderProps.disabled}
+                    >
+                      Sign Up with Google{" "}
+                    </button>
+                  )}
                   backgroundColor="red"
                   clientId={
                     "534384847718-dhr6p5r9ntqj98krqcitoaqksteppts1.apps.googleusercontent.com"
                   }
                   buttonText="Sign in Up with Google"
-                  onSuccess={onSuccess}
+                  // onSuccess={(res) => onSuccess(res)}
                   onFailure={onFailure}
-                  cookiePolicy={"single_host_origin"}
-                  isSignedIn={true}
                 />
               </div>
             </section>
