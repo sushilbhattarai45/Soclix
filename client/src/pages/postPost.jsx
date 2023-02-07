@@ -16,12 +16,7 @@ const validation = Yup.object().shape({
     .min(2, "Description Too Short!")
     .required("Description is Required"),
 });
-// const oath = new OAuth({
-//   consumer_key: "FlLWeyJcuv8dvsmUCWkgSA0ss",
-//   consumer_secret: "1NrGSKF6V0eKri3ZP2Cy8WbZMReY5pffE19MTqsemoLh8Wynfy",
-//   access_token: "1573135956072271874-SmB0hV9bfPRQsZFLFcT8nEtkA2O9o6",
-//   access_token_secret: "m7F31kj7dTBS2K9wQwh2LYgwhcGUrEAgiq6Se5PQdvR3C",
-// });
+
 import { ContextProvider } from "../config/context";
 import { toast, Toaster } from "react-hot-toast";
 import { colors } from "../tools";
@@ -101,6 +96,42 @@ const PostPost = () => {
 
     return data.data.data[0];
   };
+
+  const PostInSocial = async (values) => {
+    await PostinFb(values);
+    // await PostinIg(values);
+  };
+
+  const PostinIg = async (values) => {
+    console.log(values.image);
+
+    const { ig_appId, ig_access } = await getData();
+    console.log(values.title);
+    const url =
+      "https://graph.facebook.com/" +
+      ig_appId.trim() +
+      "/media?image_url=" +
+      values.image +
+      "&caption=" +
+      values.title +
+      "  " +
+      values.description +
+      "&access_token=" +
+      ig_access.trim();
+    const res = await axios.post(url);
+
+    const postid = await res.data.id;
+    if (postid != null) {
+      setLoad(false);
+      toast.success("Posted");
+    } else {
+      setLoad(false);
+      toast.fail("Wrong Configurations! Cannot post");
+    }
+
+    console.log(values.image);
+  };
+
   const PostinFb = async (values) => {
     setLoad(true);
     toast("Posting");
@@ -192,7 +223,7 @@ const PostPost = () => {
             validationSchema={validation}
             onSubmit={(values, { setSubmitting }) => {
               console.log(values);
-              PostinFb(values);
+              PostInSocial(values);
             }}
           >
             {({
