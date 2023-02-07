@@ -31,3 +31,18 @@ export const getUser = async (req, res) => {
     console.log({ err: "Error" });
   }
 };
+export const loginUser = async (req, res) => {
+  try {
+    console.log(req.body);
+
+    const data = await userSchema.find({ u_email: req.body.u_email });
+    console.log(data);
+    if (data.length != 0 && data != null) {
+      return res.json({ status: 200, data: data });
+    } else {
+      return res.json({ status: 400, message: "User not found" });
+    }
+  } catch (err) {
+    console.log({ err: "Error" });
+  }
+};
