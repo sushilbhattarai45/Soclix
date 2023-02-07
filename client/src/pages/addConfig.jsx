@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { TextField } from "@mui/material";
 import * as Yup from "yup";
 import axios from "axios";
+import { colors } from "../tools";
 const validation = Yup.object().shape({
   fbappId: Yup.number(),
   fbaccesstoken: Yup.string(),
@@ -22,7 +23,7 @@ const addConfig = () => {
   const [fbaccesstoken, setFbaccesstoken] = useState("");
   const getConfig = async () => {
     const data = await axios.post(
-      "http://192.168.10.104:3000/v1/api/config/getConfig",
+      "http://192.168.100.11:3000/v1/api/config/getConfig",
       {
         u_id: loggeddata?.u_gid,
       }
@@ -57,7 +58,7 @@ const addConfig = () => {
 
     setLoad(true);
     const data = await axios.post(
-      "http://192.168.10.104:3000/v1/api/config/postConfig",
+      "http://192.168.100.11:3000/v1/api/config/postConfig",
       {
         fb_appId: values.fbappId,
         u_id: loggeddata?.u_gid,
@@ -185,8 +186,18 @@ const addConfig = () => {
               />{" "} */}
                 <button
                   style={{
+                    alignSelf: "center",
+                    backgroundColor: colors.primary,
+                    color: "white",
+                    padding: 20,
+                    fontSize: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 10,
                     marginLeft: 20,
-                    alignItems: "center", // <-- the magic
+                    border: "none",
+                    outline: "none",
+                    cursor: "pointer",
                   }}
                   type="submit"
                   onClick={handleSubmit}
@@ -258,14 +269,24 @@ const addConfig = () => {
               />{" "} */}
                 <button
                   style={{
+                    alignSelf: "center",
+                    backgroundColor: colors.primary,
+                    color: "white",
+                    padding: 20,
+                    fontSize: 20,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    borderRadius: 10,
                     marginLeft: 20,
-                    alignItems: "center", // <-- the magic
+                    border: "none",
+                    outline: "none",
+                    cursor: "pointer",
                   }}
                   type="submit"
                   onClick={handleSubmit}
                 >
                   Submit
-                </button>{" "}
+                </button>
               </div>
             </>
           )}

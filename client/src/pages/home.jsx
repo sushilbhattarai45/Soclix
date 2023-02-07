@@ -6,8 +6,9 @@ import p2 from "../assets/p2.svg";
 import Popup from "reactjs-popup";
 import "reactjs-popup/dist/index.css";
 import { GoogleLogin } from "react-google-login";
-import { gapi } from "gapi-script";
+import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
+import { gapi } from "gapi-script";
 import { colors } from "../tools.js";
 import { useContext } from "react";
 import { ContextProvider } from "../config/context";
@@ -20,32 +21,73 @@ function Home() {
   const [login, setLogin] = useState(false);
   const [email, setEmail] = useState(null);
 
-  const handleSuccess = async (res) => {
+  const handleSignup = async (res) => {
     console.log("success:", res?.profileObj);
-    setloggeddata(res?.profileObj);
-    setLogin(true);
-    postData();
-    setlogged(true);
-    console.log(logged);
-    localStorage.setItem("email", JSON.stringify(res?.profileObj.email));
-    localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
+    console.log("myemail");
+    console.log(res?.profileObj.email);
+    const data = await axios.post(
+      "http://192.168.100.11:3000/v1/api/user/loginuser",
+      {
+        u_email: res?.profileObj.email,
+      }
+    );
+    console.log(data.data.status);
+    if (data.data.status == 200) {
+      toast("User  exists!! Please Login");
+    } else {
+      setloggeddata(res?.profileObj);
+      setLogin(true);
+      postData(res?.profileObj);
+      setlogged(true);
+      console.log(logged);
+      toast.success("Sucessfully Created an Account");
+      localStorage.setItem("email", JSON.stringify(res?.profileObj.email));
+      localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
+      navigate("../app/dashboard", { replace: true });
+      window.location.reload();
+    }
+  };
 
-    // navigate("../app/dashboard", { replace: true });
-    window.location.reload();
+  const handleLogin = async (res) => {
+    console.log(res?.profileObj.email);
+    const data = await axios.post(
+      "http://192.168.100.11:3000/v1/api/user/loginuser",
+      {
+        u_email: res?.profileObj.email,
+      }
+    );
+    console.log(data.data.status);
+    if (data.data.status === 200) {
+      setloggeddata(res?.profileObj);
+      setLogin(true);
+      setlogged(true);
+      console.log(loggeddata);
+      localStorage.setItem("email", JSON.stringify(res?.profileObj.email));
+      localStorage.setItem("loggedData", JSON.stringify(res?.profileObj));
+      navigate("../app/dashboard", { replace: true });
+      window.location.reload();
+    } else {
+      toast("User Doesnot exists! Please. SignUp");
+    }
   };
 
   const onFailure = (err) => {
     console.log("failed:", err);
   };
 
-  const postData = async () => {
+  const postData = async (res) => {
+    console.log("posting");
+
+    console.log(res);
+    console.log("no");
+
     const data = await axios.post(
-      "http://192.168.10.104:3000/v1/api/user/postuser",
+      "http://192.168.100.11:3000/v1/api/user/postuser",
       {
-        u_gid: loggeddata.googleId,
-        u_email: loggeddata.email,
-        u_name: loggeddata.name,
-        u_prof: loggeddata.imageUrl,
+        u_gid: res.googleId,
+        u_email: res.email,
+        u_name: res.name,
+        u_prof: res.imageUrl,
       }
     );
     console.log(data);
@@ -95,7 +137,7 @@ function Home() {
           >
             <p
               style={{
-                marginTop: "40%",
+                marginTop: "30%",
                 color: "black",
                 fontFamily: "Poppins",
                 fontWeight: "700",
@@ -114,15 +156,15 @@ function Home() {
             <p
               style={{
                 color: "black",
-                fontFamily: "Roboto",
+                fontFamily: "poppins",
                 fontWeight: "500",
                 fontSize: 20,
               }}
             >
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. Commodi
-              fuga dolorem aut? Corporis sequi veniam a cumque impedit dolore
-              voluptatum ut unde, voluptatibus est? Enim odit sed ipsum amet
-              voluptate!{" "}
+              Soclix is a platform where a business can link its different
+              social Media accounts like Facebook Instagram Twitter and can post
+              to its different account from the same platform at once which
+              saves time and effort for the company.{" "}
             </p>
 
             <section
@@ -166,10 +208,9 @@ function Home() {
                       Sign In with Google{" "}
                     </button>
                   )}
-                  clientId="534384847718-dhr6p5r9ntqj98krqcitoaqksteppts1.apps.googleusercontent.com"
+                  clientId="428588983939-512dmrggt37aptulqht3lgbsjp2cgkva.apps.googleusercontent.com"
                   buttonText="Sign in with Google"
-                  onSuccess={(res) => handleSuccess(res)}
-                  onn
+                  onSuccess={(res) => handleLogin(res)}
                   onFailure={onFailure}
                 />{" "}
               </div>
@@ -182,6 +223,7 @@ function Home() {
                 }}
               >
                 <GoogleLogin
+                  onSuccess={(res) => handleSignup(res)}
                   render={(renderProps) => (
                     <button
                       style={{
@@ -204,10 +246,8 @@ function Home() {
                     </button>
                   )}
                   backgroundColor="red"
-                  clientId={
-                    "534384847718-dhr6p5r9ntqj98krqcitoaqksteppts1.apps.googleusercontent.com"
-                  }
-                  buttonText="Sign in Up with Google"
+                  clientId="428588983939-512dmrggt37aptulqht3lgbsjp2cgkva.apps.googleusercontent.com"
+                  buttonText="Sign  Up with Google"
                   // onSuccess={(res) => onSuccess(res)}
                   onFailure={onFailure}
                 />

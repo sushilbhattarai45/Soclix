@@ -11,6 +11,9 @@ function Dashboard() {
   const [show, setShow] = useState(true);
   const [data, setData] = useState(null);
   useEffect(() => {
+    console.log("mydata");
+    console.log(loggeddata);
+
     console.log(logged);
     // window.location.reload();
     const e = localStorage.getItem("email");

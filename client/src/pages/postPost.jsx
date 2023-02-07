@@ -30,24 +30,24 @@ const PostPost = () => {
   const [load, setLoad] = useState(false);
   const { loggeddata, logged } = useContext(ContextProvider);
 
-  const getConfig = async () => {
-    console.log(loggeddata);
-    let data = await axios.post(
-      "http://192.168.10.104:3000/v1/api/config/getConfig",
-      {
-        u_id: loggeddata?.u_gid,
-      }
-    );
-  };
+  // const getConfig = async () => {
+  //   console.log(loggeddata);
+  //   let data = await axios.post(
+  //     "http://192.168.100.11:3000/v1/api/config/getConfig",
+  //     {
+  //       u_id: loggeddata?.u_gid,
+  //     }
+  //   );
+  // };
 
   const navigate = useNavigate();
   useEffect(() => {
     // var e = localStorage.getItem("email");
-    getConfig();
+    // getConfig();
     if (!logged) {
       navigate("../../", { replace: true });
     }
-  }, []);
+  }, [logged]);
 
   // const tweet = (values) => {
   //   const onFinish = (err, reply) => {
@@ -90,23 +90,24 @@ const PostPost = () => {
   const [img, setImg] = useState(null);
   const getData = async () => {
     const ldata = JSON.stringify(loggeddata);
-    alert(ldata.u_gid);
     const data = await axios.post(
-      "http://192.168.10.104:3000/v1/api/config/getConfig",
+      "http://192.168.100.11:3000/v1/api/config/getConfig",
       {
         u_id: loggeddata?.u_gid,
       }
     );
 
-    console.log("hrllo" + data.data.data[0]);
+    console.log("hello" + data.data.data[0]);
 
     return data.data.data[0];
   };
   const PostinFb = async (values) => {
     setLoad(true);
     toast("Posting");
+    alert(values.image);
+    console.log(values.image);
+
     const { fb_appId, fb_access } = await getData();
-    console.log(fb_appId);
     // const pageid = 113303321359395;
 
     // const access_token =
@@ -123,13 +124,15 @@ const PostPost = () => {
       values.description +
       "&access_token=" +
       fb_access.trim();
-    console.log("url" + url);
     const res = await axios.post(url);
 
     const postid = await res.data.id;
     if (postid != null) {
       setLoad(false);
       toast.success("Posted");
+    } else {
+      setLoad(false);
+      toast.fail("Wrong Configurations! Cannot post");
     }
 
     console.log(values.image);

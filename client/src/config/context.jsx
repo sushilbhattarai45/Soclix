@@ -33,7 +33,7 @@ const Context = ({ children }) => {
     console.log(l);
     if (l.length > 5) {
       const data = await axios.post(
-        "http://192.168.10.104:3000/v1/api/user/getUser",
+        "http://192.168.100.11:3000/v1/api/user/getuser",
         {
           u_email: l,
         }
